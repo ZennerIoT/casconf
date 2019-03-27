@@ -6,7 +6,9 @@ defmodule Casconf.LoaderTest do
   test "no sources" do
     config = %Config{type: :integer, sources: []}
 
-    assert {:error, :notfound} == Loader.load(config)
+    assert_raise Casconf.NoValueError, fn ->
+      Loader.load(config)
+    end
   end
 
   test "env source" do
@@ -17,7 +19,9 @@ defmodule Casconf.LoaderTest do
     assert {:ok, 13} == Loader.load(config)
 
     System.delete_env(env)
-    assert {:error, :notfound} = Loader.load(config)
+    assert_raise Casconf.NoValueError, fn ->
+      Loader.load(config)
+    end
   end
 
   test "default and env source" do
