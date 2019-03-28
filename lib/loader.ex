@@ -77,6 +77,29 @@ defmodule Casconf.Loader do
   def load_in({:casconf, type, sources}) do
     load_in(value(type, sources))
   end
+  # :case will get a key from the 2nd element and then get the value from the 3rd element using it as a keyword list
+  def load_in({:case, key, values}) do
+    key = load_in(key)
+    case Keyword.get(values, key) do
+      nil -> raise Casconf.NoValueError, []
+      value -> load_in(value)
+    end
+  end
+  # :cascade will try to load the first config, if that raises, the second, and so on
+  def load_in({:cascade, configs}) when is_list(configs) do
+    result = Enum.reduce_while(configs, @not_found_return, fn config, _acc ->
+      try do
+        {:halt, load_in(config)}
+      rescue
+        Casconf.NoValueError -> {:cont, @not_found_return}
+        Casconf.CastError -> {:cont, @not_found_return}
+      end
+    end)
+    case result do
+      {:error, :notfound} -> raise Casconf.NoValueError, []
+      value -> value
+    end
+  end
   def load_in(%Casconf.Config{} = config) do
     case load(config) do
       {:ok, value} -> value
