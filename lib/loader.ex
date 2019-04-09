@@ -130,8 +130,7 @@ defmodule Casconf.Loader do
   Returns the configured loaders in order of precedence
   """
   def loaders do
-    :casconf
-    |> Application.get_env(__MODULE__)
-    |> Keyword.get(:loaders, @default_loaders)
+    config = Application.get_env(:casconf, __MODULE__) || []
+    Keyword.get(config, :loaders, @default_loaders)
   end
 end
