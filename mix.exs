@@ -4,10 +4,13 @@ defmodule Casconf.MixProject do
   def project do
     [
       app: :casconf,
-      version: "0.1.0",
+      version: "1.0.0",
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      description: "Runtime config fed by static elixir expressions",
+      deps: deps(),
+      package: package(),
+      source_url: "https://github.com/zenneriot/casconf"
     ]
   end
 
@@ -18,10 +21,19 @@ defmodule Casconf.MixProject do
     ]
   end
 
+  def package() do
+    [
+      name: "casconf",
+      licenses: ["MIT"],
+      links: %{"GitHub" => "https://github.com/zenneriot/casconf"}
+    ]
+  end
+
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:ecto, "~> 3.0", only: :test}
+      {:ecto, "~> 3.0", only: :test},
+      {:ex_doc, ">= 0.0.0", only: :dev, runtime: false}
     ]
   end
 end
